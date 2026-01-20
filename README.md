@@ -214,6 +214,8 @@ npm test
 
 🤔 **Reflection Question:** Why do we intentionally write a failing test first? How does this relate to what Fowler describes as "state verification"?
 
+We write a failing test first so that we know the minimal amount of code to write to make it pass. For example, writing the failing test will return 'expected false', and now you know that the minimal passing test would be to return false.
+
 ### Step 2.2: GREEN — Write Minimal Code to Pass
 
 Create `src/cartUtils.ts` with the absolute minimum to pass:

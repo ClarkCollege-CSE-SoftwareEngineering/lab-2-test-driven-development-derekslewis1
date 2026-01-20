@@ -29,7 +29,7 @@ export function calculateTax(
 		return 0;
 	}
 
-	return price * (taxRate / 100);
+	const tax = price * (taxRate / 100);
 	return Math.round(tax * 100) / 100;
 }
 
@@ -40,8 +40,15 @@ export function calculateTotal(
 ): CartTotals {
   // TODO: Implement this function using TDD
   // Remember: write each test first, see it fail, then make it pass
- if (items[0].isTaxExempt == false){
-	return true;
+
+ 
+ if (items.length === 0){
+	return {
+	subtotal: 0,
+	discount: 0,
+	tax: 0,
+	total: 0
+	};
   }
 
   if (items.length == 1){

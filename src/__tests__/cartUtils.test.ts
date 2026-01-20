@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { applyDiscount, calculateTax, calculateTotal, CartItem } from "../cartUtils";
+import { applyDiscount, calculateTax, calculateTotal, CartItem } from "../cartUtils.js";
 
 describe("applyDiscount", () => {
   it("applies a percentage discount to a price", () => {
@@ -86,13 +86,24 @@ describe("calculateTotal", () => {
   });
 
   it("applies discount before calculating tax", () => {
-    	expect(calculateTotal([{price: 20, isTaxExempt: false}])).toBe(true);
+    // This test needs to be rewritten to actually test discount + tax
+    expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: false}], 10, 8.5)).toStrictEqual({
+      subtotal: 20,
+      discount: 2,  // 10% of 20
+      tax: 1.44,    // 8.5% of 18 (after discount)
+      total: 19.44
+    });
   });
 
-  it("excludes tax-exempt items from tax calculation", () => {
-    // TODO: Write this test
+it("excludes tax-exempt items from tax calculation", () => {
+    // This should test that tax-exempt items don't get taxed
+    expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: true}], 0, 8.5)).toStrictEqual({
+      subtotal: 20,
+      discount: 0,
+      tax: 0,  // Should be 0 because item is tax exempt
+      total: 20
+    });
   });
-
   // TODO: Add at least 2 more test cases
 });
 
