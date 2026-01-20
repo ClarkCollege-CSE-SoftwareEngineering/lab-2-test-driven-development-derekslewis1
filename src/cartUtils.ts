@@ -38,40 +38,50 @@ export function calculateTotal(
   discountPercent: number = 0,
   taxRate: number = 0
 ): CartTotals {
-  // TODO: Implement this function using TDD
-  // Remember: write each test first, see it fail, then make it pass
-
- 
- if (items.length === 0){
-	return {
-	subtotal: 0,
-	discount: 0,
-	tax: 0,
-	total: 0
-	};
+  // Handle empty array for empty cart
+  if (items.length === 0) {
+    return {
+      subtotal: 0,
+      discount: 0,
+      tax: 0,
+      total: 0
+    };
   }
 
-  if (items.length == 1){
-return {
-	subtotal: 20,
-	discount: 0,
-	tax: 0,
-	total: 20,
-  	}
-  } 
-  if (items.length == 2){
-return {
-	subtotal: 60,
-	discount: 0,
-	tax: 0,
-	total: 60,
-  	}
+  // calculate subtotal - sum of price * quantity for all items
+  let subtotal = 0;
+  // loop through items for subtotal
+  for (const item of items) {
+    subtotal += item.price * item.quantity;
   }
- 
- 
-  throw new Error("Not implemented");
+
+  // apply discount to subtotal
+  const subtotalAfterDiscount = applyDiscount(subtotal, discountPercent);
+  const discount = subtotal - subtotalAfterDiscount;
+
+  // calculate tax on the discounted amount, but only for non tax exempt items
+  // figure out what portion of the discounted amount is taxable
+  let taxableSubtotal = 0;
+  for (const item of items) {
+    if (!item.isTaxExempt) {
+      taxableSubtotal += item.price * item.quantity;
+    }
+  }
+
+  // apply the same discount percentage to the taxable portion
+  const taxableAfterDiscount = applyDiscount(taxableSubtotal, discountPercent);
+  const tax = calculateTax(taxableAfterDiscount, taxRate, false);
+
+  const total = subtotalAfterDiscount + tax;
+
+ // return object 
+  return {
+    subtotal: Math.round(subtotal * 100) / 100,
+    discount: Math.round(discount * 100) / 100,
+    tax: Math.round(tax * 100) / 100,
+    total: Math.round(total * 100) / 100
+  };
 }
-
 export interface CartItem {
   price: number;
   quantity: number;

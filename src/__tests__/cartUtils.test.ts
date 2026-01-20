@@ -64,6 +64,7 @@ describe("calculateTotal", () => {
   // Consider: single item, multiple items, discounts, tax-exempt items,
   // empty cart, mixed tax-exempt and taxable items
 
+  // test for single item
   it("calculates totals for a single item", () => {
     expect(calculateTotal([{ price:20, quantity: 1}])).toStrictEqual({
 	    subtotal: 20,
@@ -73,6 +74,7 @@ describe("calculateTotal", () => {
     });
   });
 
+  // test for multiple items
   it("calculates totals for multiple items", () => {
     expect(calculateTotal([
 	    {price: 20, quantity: 1},
@@ -85,18 +87,19 @@ describe("calculateTotal", () => {
     });
   });
 
+  // test discounts
   it("applies discount before calculating tax", () => {
-    // This test needs to be rewritten to actually test discount + tax
+    
     expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: false}], 10, 8.5)).toStrictEqual({
       subtotal: 20,
       discount: 2,  // 10% of 20
-      tax: 1.44,    // 8.5% of 18 (after discount)
-      total: 19.44
+      tax: 1.53,    // 8.5% of 18 (after discount)
+      total: 19.53 // should be 18 + 1.53 = 19.53
     });
   });
 
-it("excludes tax-exempt items from tax calculation", () => {
-    // This should test that tax-exempt items don't get taxed
+  // test tax
+  it("excludes tax-exempt items from tax calculation", () => {
     expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: true}], 0, 8.5)).toStrictEqual({
       subtotal: 20,
       discount: 0,
@@ -104,6 +107,28 @@ it("excludes tax-exempt items from tax calculation", () => {
       total: 20
     });
   });
-  // TODO: Add at least 2 more test cases
+
+  // test empty cart
+  it("reacts to empty cart correctly", () => {
+    expect(calculateTotal([])).toStrictEqual({
+	subtotal: 0,
+	discount: 0,
+	tax: 0,
+	total: 0
+    });	
+  });
+
+  // test mix of tax exempt, no tax
+  it("can handle a mix of tax exempt / non tax exempt items", () => {
+    expect(calculateTotal([
+      {price: 20, quantity: 1, isTaxExempt: true},   // tax exempt item
+      {price: 30, quantity: 1, isTaxExempt: false}  // taxable item
+    ], 0, 10)).toStrictEqual({
+      subtotal: 50,      // 20 + 30 should give us a 50 subtotal
+      discount: 0,
+      tax: 3,            // 10% tax only on the $30 item so + $3.
+      total: 53          // 50 + 3 = 53 expected
+    });
+  });
 });
 
