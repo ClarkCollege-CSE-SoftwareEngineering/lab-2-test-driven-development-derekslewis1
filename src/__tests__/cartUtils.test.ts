@@ -66,7 +66,8 @@ describe("calculateTotal", () => {
 
   // test for single item
   it("calculates totals for a single item", () => {
-    expect(calculateTotal([{ price:20, quantity: 1}])).toStrictEqual({
+    expect(calculateTotal([{ price:20, quantity: 1}
+    ])).toStrictEqual({
 	    subtotal: 20,
 	    discount: 0,
 	    tax: 0,
@@ -90,17 +91,19 @@ describe("calculateTotal", () => {
   // test discounts
   it("applies discount before calculating tax", () => {
     
-    expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: false}], 10, 8.5)).toStrictEqual({
+    expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: false}
+    ], 10, 10)).toStrictEqual({
       subtotal: 20,
       discount: 2,  // 10% of 20
-      tax: 1.53,    // 8.5% of 18 (after discount)
-      total: 19.53 // should be 18 + 1.53 = 19.53
+      tax: 1.80,    // 10% of 18 so 1.80 (after discount)
+      total: 19.80 // should be 18 + 1.80 = 19.80
     });
   });
 
   // test tax
   it("excludes tax-exempt items from tax calculation", () => {
-    expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: true}], 0, 8.5)).toStrictEqual({
+    expect(calculateTotal([{price: 20, quantity: 1, isTaxExempt: true}
+    ], 0, 10)).toStrictEqual({
       subtotal: 20,
       discount: 0,
       tax: 0,  // Should be 0 because item is tax exempt

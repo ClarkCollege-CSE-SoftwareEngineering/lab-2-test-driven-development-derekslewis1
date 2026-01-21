@@ -51,8 +51,8 @@ export function calculateTotal(
   // calculate subtotal - sum of price * quantity for all items
   let subtotal = 0;
   // loop through items for subtotal
-  for (const item of items) {
-    subtotal += item.price * item.quantity;
+  for (let i = 0; i < items.length; i++) {
+    subtotal += items[i].price * items[i].quantity;
   }
 
   // apply discount to subtotal
@@ -60,11 +60,10 @@ export function calculateTotal(
   const discount = subtotal - subtotalAfterDiscount;
 
   // calculate tax on the discounted amount, but only for non tax exempt items
-  // figure out what portion of the discounted amount is taxable
   let taxableSubtotal = 0;
-  for (const item of items) {
-    if (!item.isTaxExempt) {
-      taxableSubtotal += item.price * item.quantity;
+  for (let i = 0; i < items.length; i++) {
+    if (!items[i].isTaxExempt) {
+      taxableSubtotal += items[i].price * items[i].quantity;
     }
   }
 

@@ -214,7 +214,7 @@ npm test
 
 🤔 **Reflection Question:** Why do we intentionally write a failing test first? How does this relate to what Fowler describes as "state verification"?
 
-We write a failing test first so that we know the minimal amount of code to write to make it pass. For example, writing the failing test will return 'expected false', and now you know that the minimal passing test would be to return false.
+We write a failing test first so that we know the minimal amount of code to write to make it pass. We are checking the functions output (like verifing applyDiscount(100,10) returns 90). Seeing the test fail first confirms we're actually testing the functions behavior and verifying its state. This helps to then write just enough code to produce a passing state.
 
 ### Step 2.2: GREEN — Write Minimal Code to Pass
 
@@ -317,6 +317,7 @@ Run tests again to ensure nothing broke. Both implementations produce the same r
 
 🤔 **Reflection Question:** In the mockist vs. classicist debate from Fowler's article, which approach are we using here? Why don't we need any test doubles for this function?
 
+We are using the classicist approach. We are testing the state of the response. We don't need test doubles because we arent testing anything outside of our function. We are simply testing that the function returns a correct value.
 ---
 
 ## Part 3: Guided TDD — `calculateTax()` (25 minutes)
@@ -429,6 +430,9 @@ export function calculateTax(
 Run tests again—they should still pass since we're using `toBeCloseTo` for decimal comparisons.
 
 🤔 **Reflection Question:** Notice that we changed the implementation (added rounding), but our tests still pass because we used `toBeCloseTo`. This is what Kent C. Dodds means by "not testing implementation details." What would a test that _does_ test implementation details look like?
+
+A test that is testing implementation details would check how the function operates internally, rather than its end state. For example you could have a test that verifies we are calling Math.round. This test would fail if we used Math.floor, but it's still giving us the right end state. 
+
 
 ---
 
