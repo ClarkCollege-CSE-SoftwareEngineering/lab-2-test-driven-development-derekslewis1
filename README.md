@@ -472,44 +472,7 @@ export interface CartTotals {
 
 **TODO:** Write at least 6 test cases FIRST, then implement the function.
 
-Start by adding this skeleton to your test file:
-
-```typescript
-import {
-  applyDiscount,
-  calculateTax,
-  calculateTotal,
-  CartItem,
-} from "../cartUtils";
-
-// ... existing tests ...
-
-describe("calculateTotal", () => {
-  // TODO: Add at least 6 test cases
-  // Consider: single item, multiple items, discounts, tax-exempt items,
-  // empty cart, mixed tax-exempt and taxable items
-
-  it("calculates totals for a single item", () => {
-    // TODO: Write this test
-  });
-
-  it("calculates totals for multiple items", () => {
-    // TODO: Write this test
-  });
-
-  it("applies discount before calculating tax", () => {
-    // TODO: Write this test
-  });
-
-  it("excludes tax-exempt items from tax calculation", () => {
-    // TODO: Write this test
-  });
-
-  // TODO: Add at least 2 more test cases
-});
-```
-
-Then implement `calculateTotal` in `src/cartUtils.ts`:
+Below is my calculateTotal function. It calculates the subtotal, applies discounts, calculates tax on non-exempt items, and returns the final totals:
 
 ```typescript
 export function calculateTotal(
@@ -517,18 +480,51 @@ export function calculateTotal(
   discountPercent: number = 0,
   taxRate: number = 0
 ): CartTotals {
-  // TODO: Implement this function using TDD
-  // Remember: write each test first, see it fail, then make it pass
-  throw new Error("Not implemented");
+  // Handle empty array for empty cart
+  if (items.length === 0) {
+    return {
+      subtotal: 0,
+      discount: 0,
+      tax: 0,
+      total: 0
+    };
+  }
+
+  // calculate subtotal - sum of price * quantity for all items
+  let subtotal = 0;
+  // loop through items for subtotal
+  for (let i = 0; i < items.length; i++) {
+    subtotal += items[i].price * items[i].quantity;
+  }
+
+  // apply discount to subtotal
+  const subtotalAfterDiscount = applyDiscount(subtotal, discountPercent);
+  const discount = subtotal - subtotalAfterDiscount;
+
+  // calculate tax on the discounted amount, but only for non tax exempt items
+  let taxableSubtotal = 0;
+  for (let i = 0; i < items.length; i++) {
+    if (!items[i].isTaxExempt) {
+      taxableSubtotal += items[i].price * items[i].quantity;
+    }
+  }
+
+  // apply the same discount percentage to the taxable portion
+  const taxableAfterDiscount = applyDiscount(taxableSubtotal, discountPercent);
+  const tax = calculateTax(taxableAfterDiscount, taxRate, false);
+
+  const total = subtotalAfterDiscount + tax;
+
+  // return object 
+  return {
+    subtotal: Math.round(subtotal * 100) / 100,
+    discount: Math.round(discount * 100) / 100,
+    tax: Math.round(tax * 100) / 100,
+    total: Math.round(total * 100) / 100
+  };
 }
 ```
 
-**Hints:**
-
-- Calculate subtotal first (sum of price × quantity for all items)
-- Apply discount to get discounted subtotal
-- Calculate tax only on non-exempt items (after discount is applied proportionally)
-- Return all four values rounded to 2 decimal places
 
 ✅ **Checkpoint:** When complete, run `npm run test:coverage`. All tests should pass, and you should have at least 90% coverage.
 
@@ -544,18 +540,24 @@ npm run test:coverage
 
 ✅ **Checkpoint:** Coverage should be at least 90% across all metrics. If not, identify untested code paths and add tests.
 
-### Step 5.2: Create Your README
+## How to run tests
 
-Create or update the `README.md` in your project root with:
+- Run all tests: `npm test`
+- Run tests with coverage: `npm run test:coverage`
+- Build TypeScript: `npm run build`
 
-1. **Project description** (1-2 sentences)
-2. **How to run tests** (commands)
-3. **Functions implemented** (brief description of each)
-4. **Reflection section** answering:
+
+Reflection Section: 
+
    - How did TDD change the way you approached implementing `calculateTotal`?
    - Which of Fowler's test double types (dummy, stub, fake, spy, mock) did you need for this lab? Why or why not?
    - What's one thing that would have been different if you wrote the implementation first?
 
+1. Using TDD made me write more minimal concrete code in my actual functions. Writing a test that I knew I had to get the result of made writing the function easier.
+
+2. I did not use any test double types. I was testing state, rather than behavior and never had the need to mock anything.
+
+3. If I had wrote the implementation first I think I would have written more code in each function. I probably would have overdone it trying to write a perfect function, rather than just taking it simply test by test. 
 ---
 
 ## Deliverables
